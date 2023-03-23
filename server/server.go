@@ -5,13 +5,12 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
+	"github.com/bwmarrin/snowflake"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	log "github.com/sirupsen/logrus"
 	"net/http"
 	"sync"
-	"sync/atomic"
-	"time"
 	"wsserver/configs"
 	"wsserver/iserverface"
 	"wsserver/zlog"
@@ -54,12 +53,22 @@ func NewServer() iserverface.IServer {
 func (s *Server) Start(c *gin.Context) {
 	fmt.Printf("[START] Server name: %s,listenner at IP: %s, Port %d is starting\n", s.Name, s.IP, s.Port)
 
+	// Create a new Node with a Node number of 1
+	node, err := snowflake.NewNode(1)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
 	//开启一个go去做服务端Linster业务
 	go func() {
+		/*
+			//TODO server.go 应该有一个自动生成ID的方法
+			curConnId := uint64(time.Now().Unix())
+			connId := atomic.AddUint64(&curConnId, 1)*/
 
-		//TODO server.go 应该有一个自动生成ID的方法
-		curConnId := uint64(time.Now().Unix())
-		connId := atomic.AddUint64(&curConnId, 1)
+		//使用雪花ID
+		connId := uint64(node.Generate())
 		//3.1 阻塞等待客户端建立连接请求
 		var (
 			err        error

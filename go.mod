@@ -3,6 +3,7 @@ module wsserver
 go 1.14
 
 require (
+	github.com/bwmarrin/snowflake v0.3.0 // indirect
 	github.com/fastly/go-utils v0.0.0-20180712184237-d95a45783239 // indirect
 	github.com/gin-gonic/gin v1.6.2
 	github.com/go-redis/redis v6.15.7+incompatible
